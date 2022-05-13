@@ -1,0 +1,39 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo 'Checking format'
+
+# Check Prettier standards
+yarn check-format ||
+(
+    echo 'Prettier Check Failed. Run yarn format, add changes and try commit again.';
+    false;
+)
+echo 'Checking lint'
+
+# Check ESLint Standards
+yarn check-lint ||
+(
+        echo 'ESLint Check Failed. Make the required changes listed above, add changes and try to commit again.'
+        false; 
+)
+
+echo 'Checking types'
+# Check tsconfig standards
+yarn check-types ||
+(
+    echo 'Type check failed. Make the changes required above.'
+    false;
+)
+
+# If everything passes... Now we can commit
+echo 'Checks complete running next build'
+
+yarn build ||
+(
+    echo 'Next build failed.'
+    false;
+)
+
+# If everything passes... Now we can commit
+echo 'Successful passed format, lint, types, and build'
